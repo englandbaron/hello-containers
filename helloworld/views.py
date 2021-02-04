@@ -17,6 +17,7 @@ def index(request):
         _body = json.loads(_body)
     except:
         pass
+    LOG.info(request.__dict__)
     LOG.info("api_post.body: %s" % json.dumps(_body, indent=4))
     LOG.info("api_post.header: %s" % json.dumps(
         request.headers.__dict__, indent=4
