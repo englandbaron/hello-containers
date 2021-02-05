@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render
 
+import hmac
+import hashlib
 import json
 import logging
 LOG = logging.getLogger(__name__)
@@ -13,16 +15,23 @@ LOG = logging.getLogger(__name__)
 @csrf_exempt
 def index(request):
     _body = request.body.decode("utf-8")
+    print("type: %s" % type(request.body))
     try:
         _body = json.loads(_body)
     except:
         pass
-    LOG.info(request.__dict__)
-    LOG.info("api_post.body: %s" % json.dumps(_body, indent=4))
-    LOG.info("api_post.header: %s" % json.dumps(
+    header_signature = request.headers.get('X-Hub-Signature')
+    print("============================================")
+    print("Header Signature: %s" % header_signature)
+    print("============================================")
+    mac = hmac.new(bytes("secret", "utf-8"), msg=request.body, digestmod=hashlib.sha1)
+    print("============================================")
+    print(mac.hexdigest())
+    print("============================================")
+    print("api_post.header: %s" % json.dumps(
         request.headers.__dict__, indent=4
     ))
     return JsonResponse({
-        "data": _body,
-        "header": request.headers.__dict__
+        "header": request.headers.__dict__,
+        "mac": mac.hexdigest()
     })
