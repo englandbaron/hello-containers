@@ -5,7 +5,11 @@ orbs:
 
 jobs:
   build-and-test:
-    executor: python/default
+    docker:
+      - image: "python:3.6-slim"
+        auth:
+          # username: mydockerhub-user
+          # password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - python/load-cache
@@ -14,8 +18,19 @@ jobs:
       - run:
           command: python manage.py test
           name: Test
+  echo-hello-world:
+    executor: python/default
+    steps:
+      - run:
+          command: |
+            echo Running test
+            set +e
+            mkdir -p /tmp/test-results
+            make test
+          name: Just-For-Fun
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - echo-hello-world
