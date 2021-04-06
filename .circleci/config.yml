@@ -26,7 +26,6 @@ jobs:
             echo Running test
             set +e
             mkdir -p /tmp/test-results
-            make test
           name: Just-For-Fun
 
 workflows:
